@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const productControllers = require('../controllers/productController');
+//gestion identification
+const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
 
 /********************ROUTE***************************** */
 /**
@@ -8,26 +11,31 @@ const productControllers = require('../controllers/productController');
  * le dernier middleware renvoi la responce au client
  * renvoi un code http de 201 de création de donnée reussie
  */
-router.post('/',productControllers.createProduct);
+router.post('/', auth,multer, productControllers.createProduct);
     /**
    * recup d'un seule article product
    */
-router.get('/:id',productControllers.getProductUnity);
+router.get('/:id', auth, productControllers.getProductUnity);
   /**
    * modification d'un article product
    */
-router.put('/:id', productControllers.modifProduct);
+router.put('/:id', auth,multer ,productControllers.modifProduct);
   /**
    * 
   * suppression d'un article product
   */
-router.delete('/:id', productControllers.deleteProduct);
+router.delete('/:id',auth, productControllers.deleteProduct);
   /**
    * 
    * intercepter tout les products
    * (/api/sauces) = http://3000/api/sauces
    */
-router.get('/', productControllers.getAllProduct);
+router.get('/',auth, productControllers.getAllProduct);
+/**
+ * 
+ * 
+ */
+ router.post('/:id/like', auth, productControllers.likeOrNot);
   /***********************************FIN ROUTE************ */
 
 module.exports = router;
