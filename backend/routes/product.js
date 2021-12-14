@@ -30,12 +30,13 @@ router.delete('/:id',auth, productControllers.deleteProduct);
    * intercepter tout les products
    * (/api/sauces) = http://3000/api/sauces
    */
-router.get('/',auth, productControllers.getAllProduct);
+router.get('/', auth, productControllers.getAllProduct);
+
 /**
  * 
  * 
  */
- router.post('/:id/like', auth, productControllers.likeOrNot);
+ router.post('/:id/like', auth, productControllers.likeSauces);
   /***********************************FIN ROUTE************ */
 
 module.exports = router;
