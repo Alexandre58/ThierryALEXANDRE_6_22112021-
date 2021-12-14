@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
@@ -14,8 +15,7 @@ app.use(express.json());
 //logique de connexion a mongodb
 mongoose
   .connect(
-    "mongodb+srv://ALEXANDRE:cerche@cluster0.gufrz.mongodb.net/saucesP6",
-    //mongoose.connect('mongodb://localhost:27017/test',
+    process.env.APP_CONNECT_MONGOD,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
@@ -49,7 +49,7 @@ app.use(bodyParser.json());
 //images
 
 app.use("/images", express.static(path.join(__dirname, "images")));
-                                      /*test de code pour debugger**************************************************/
+              /*test de code pour debugger**************************************************/
 /*app.use((req, res, next)=> {
   console.log("requête reçue ligne 13 fichier app.js");
   next();
@@ -58,7 +58,8 @@ app.use((req, res, next)=> {
   res.json({message: "requête reçue app.js ligne 14"})
   
 })*/
-                                      /*fin test de code pour debugger**********************************************/
+                                      
+            /*fin test de code pour debugger**********************************************/
 app.use("/api/sauces", productRoutes);
 app.use("/api/auth", userRoutes);
 
