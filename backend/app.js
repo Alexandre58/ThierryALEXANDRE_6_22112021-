@@ -7,14 +7,12 @@ const path = require("path");
 //import routes 
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
-
-/************************************************** */
+/**************************************************Express **/
 const app = express();
-
-app.use(express.json());
-//utilisation d'encodega json dans express
-app.use(express.urlencoded({extended: true}));
-//logique de connexion a mongodb
+/********************************************************** */
+app.use(express.json());//gestion de la requête POST venant de l'application front-end, extraction du corps JSON
+/**************************************************** *******/
+//logique de connexion a mongodb atlas et sécurisation par une variable d'environnement
 mongoose
   .connect(
     process.env.APP_CONNECT_MONGOD,
@@ -23,35 +21,37 @@ mongoose
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 console.log(`Le code de connexion protégé et vérification du bon fonctionnement de dotenv : ${process.env.APP_CONNECT_MONGOD}`);
-//requete POST intercepte tous ce qui contient du json(acces au corps de la reqête)
-//plus besoin d'utiliser bodyparser qui est une ancienne methode
 
-/*************************************************** */
-//CORS
+/*************************************************** *************************************************************/
+//CORS code permettant de faire fonctionné deux adresses differentes backend et frontend de ce cas,premier middleware d'accés 
 //par defaut les requêtes ajax sont interdites
 //permission a l'appication d'accéder a l'api avec les headers spécifiques
-//evite les erreurs liées quand le client ne partage pas les serveur de la mê origine
+//evite les erreurs liées quand le client ne partage pas les serveur de la même origine
 //configure des headers specifiques a l'objet responce
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "*");//origin = * => tout le monde peut accéder
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );
+  );//autorisation de certains hearders
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );
+  );//autorise ces methodes
   next();
 });
-
-
-/* Conversion des fichiers JSON pour l'import de données */
+/******************************************************************************************************************** */
+/* Middleware Conversion des fichiers JSON pour l'import de données */
 app.use(bodyParser.json());
-//images
-
+/******************************************************** */
+//Middleware images
 app.use("/images", express.static(path.join(__dirname, "images")));
-              /*test de code pour debugger**************************************************/
+
+app.use("/api/sauces", productRoutes);
+app.use("/api/auth", userRoutes);
+
+
+/*test de code pour postman**************************************************/
 /*app.use((req, res, next)=> {
   console.log("requête reçue ligne 13 fichier app.js");
   next();
@@ -61,8 +61,5 @@ app.use((req, res, next)=> {
   
 })*/
                                       
-            /*fin test de code pour debugger**********************************************/
-app.use("/api/sauces", productRoutes);
-app.use("/api/auth", userRoutes);
-
+/*fin test de code pour postman**********************************************/
 module.exports = app;
