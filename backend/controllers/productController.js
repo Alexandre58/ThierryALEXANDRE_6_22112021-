@@ -1,5 +1,5 @@
-"use strict"
 const Product = require("../models/Product");
+//"file system accés au opération lié au differents fichiers
 const fs = require("fs");
 
 /**
@@ -57,7 +57,7 @@ exports.modifProduct = (req, res, next) => {
     .then(() => res.status(200).json({ message: "Sauce modifiée !" }))
     .catch((error) => res.status(400).json({ error }));
 };
-//delete product et verification que l'utilisateur a bien le bon identifiant
+//delete product en verifiant que l'utilisateur a bien le bon identifiant
 exports.deleteProduct = (req, res, next) => {
   Product.findOne({ _id: req.params.id })
     .then((product) => {
@@ -90,14 +90,18 @@ exports.likeSauces = (req, res) => {
     )
       .then(() => res.status(200).json({ message: "Like ajouté !" }))
       .catch((error) => res.status(400).json({ error }));
-    /* Si le client disike cette sauce */
+    /* Si le client dislike cette sauce */
   } else if (req.body.like === -1) {
+    try {
     Product.findOneAndUpdate(
       { _id: req.params.id },
-      { $inc: { dislikes: 1 }, $push: { usersDisliked: req.body.userId } }
+      { $inc: { dislikes: 1 }, $push: { UsersDisliked: req.body.userId } }
     )
       .then(() => res.status(200).json({ message: "Dislike ajouté !" }))
       .catch((error) => res.status(400).json({ error }));
+    } catch (e) {
+      console.log(e);
+    }
     /* Si le client annule son choix */
   } else {
     Product.findOne({ _id: req.params.id }).then((resultat) => {
@@ -108,10 +112,10 @@ exports.likeSauces = (req, res) => {
         )
           .then(() => res.status(200).json({ message: "like retiré !" }))
           .catch((error) => res.status(400).json({ error }));
-      } else if (resultat.usersDisliked.includes(req.body.userId)) {
+      } else if (resultat.UsersDisliked.includes(req.body.userId)) {
         Product.findOneAndUpdate(
           { _id: req.params.id },
-          { $inc: { dislikes: -1 }, $pull: { usersDisliked: req.body.userId } }
+          { $inc: { dislikes: -1 }, $pull: { UsersDisliked: req.body.userId } }
         )
           .then(() => res.status(200).json({ message: "dislike retiré !" }))
           .catch((error) => res.status(400).json({ error }));
@@ -120,55 +124,3 @@ exports.likeSauces = (req, res) => {
   }
 };
 
-//likeOrnot
-/*
-exports.likeOrNot = (req, res, next) => {
-  if (req.body.like === 1) {
-    Product.updateOne(
-      { _id: req.params.id },
-      {
-        $inc: { likes: req.body.like++ },
-        $push: { usersLiked: req.body.userId },
-      }
-    )
-      .then((sauce) => res.status(200).json({ message: "Like ajouté !" }))
-      .catch((error) => res.status(400).json({ error }));
-  } else if (req.body.like === -1) {
-    Product.updateOne(
-      { _id: req.params.id },
-      {
-        $inc: { dislikes: req.body.like++ * -1 },
-        $push: { usersDisliked: req.body.userId },
-      }
-    )
-      .then((sauce) => res.status(200).json({ message: "Dislike ajouté !" }))
-      .catch((error) => res.status(400).json({ error }));
-  } else {
-    Product.findOne({ _id: req.params.id })
-      .then((sauce) => {
-        if (sauce.usersLiked.includes(req.body.userId)) {
-          Product.updateOne(
-            { _id: req.params.id },
-            { $pull: { usersLiked: req.body.userId }, $inc: { likes: -1 } }
-          )
-            .then((sauce) => {
-              res.status(200).json({ message: "Like supprimé !" });
-            })
-            .catch((error) => res.status(400).json({ error }));
-        } else if (sauce.usersDisliked.includes(req.body.userId)) {
-          Product.updateOne(
-            { _id: req.params.id },
-            {
-              $pull: { usersDisliked: req.body.userId },
-              $inc: { dislikes: -1 },
-            }
-          )
-            .then((sauce) => {
-              res.status(200).json({ message: "Dislike supprimé !" });
-            })
-            .catch((error) => res.status(400).json({ error }));
-        }
-      })
-      .catch((error) => res.status(400).json({ error }));
-  }
-};*/

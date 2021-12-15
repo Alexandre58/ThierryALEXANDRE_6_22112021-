@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
 //accés chemin images
 const path = require("path");
-
+//import routes 
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
 
@@ -12,6 +12,8 @@ const userRoutes = require("./routes/user");
 const app = express();
 
 app.use(express.json());
+//utilisation d'encodega json dans express
+app.use(express.urlencoded({extended: true}));
 //logique de connexion a mongodb
 mongoose
   .connect(
@@ -20,7 +22,7 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-
+console.log(`Le code de connexion protégé et vérification du bon fonctionnement de dotenv : ${process.env.APP_CONNECT_MONGOD}`);
 //requete POST intercepte tous ce qui contient du json(acces au corps de la reqête)
 //plus besoin d'utiliser bodyparser qui est une ancienne methode
 

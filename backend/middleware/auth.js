@@ -12,7 +12,9 @@ module.exports = (req, res, next) => {
     } else {
       next();
     }
-  } catch (error) {
-    res.status(401).json({ error: error | "requête non identifiée" });
+  } catch {
+    res.status(401).json({
+      error: new Error('Requête invalide !')
+    });
   }
 };

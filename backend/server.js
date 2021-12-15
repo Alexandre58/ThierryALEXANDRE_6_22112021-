@@ -12,7 +12,7 @@ const normalizePort = (val) => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || process.env.SERVER_CONECT);
+const port = normalizePort(process.env.PORT || process.env.SERVER_CONNECT);
 app.set("port", port);
 //recherche erreur et gestion puis enregistre dans le serveur
 const errorHandler = (error) => {
