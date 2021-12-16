@@ -10,11 +10,4 @@ router.post('/login', userControle.login);
 
 
 
-
-
-
-
-
-
-
 module.exports = router;

@@ -1,17 +1,19 @@
 const Product = require("../models/Product");
 //"file system accés au opération lié au differents fichiers
 const fs = require("fs");
-
+/***************************************OPERATION CRUD*************** ******************************************/
 /**
- * intercepter les reqêtes POST / converti les données de l'objet en json
+ *
+ * intercepter les reqêtes / converti les données de l'objet en json
  * le dernier middleware renvoi la responce au client
- * renvoi un code http de 201 de création de donnée reussie
+ * renvoi un code http de création de donnée reussie
  */
+/***************************************************CREAT************ */
 exports.createProduct = (req, res, next) => {
   //extraire l'objet json de product
   const productObject = JSON.parse(req.body.sauce);
-  //retirer le champ _id car elle sera automatiquement crée
-  delete productObject._id;
+  
+  delete productObject._id;//retirer le champ _id car elle sera automatiquement crée par mongodb
   //création d'une nouvelle instance de l'objet product
   const product = new Product({
     //...copie du corps de la requête
@@ -22,7 +24,6 @@ exports.createProduct = (req, res, next) => {
     }`,
   });
   //sauvegarde dans la base de donnée/envoi status de la requête
-  //envoi en json et catch error en cas de soucis
   product
     .save()
     .then(() => res.status(201).json({ message: "Objet enregistré !" }))
@@ -30,16 +31,26 @@ exports.createProduct = (req, res, next) => {
       res.status(400).json({ message: " ligne 44 Objet non enregistré !" })
     );
 };
-
-//envoi d'un seul product
+/***********************************************READ************************* */
+/**
+ * find()renvoie tout les products
+ */
+ exports.getAllProduct = (req, res, next) => {
+  Product.find()
+    .then((sauces) => res.status(200).json(sauces))
+    .catch((error) =>
+      res.status(400).json({ message: "Objet non enregistré !" })
+    );
+};
+//renvoi d'un seul product (en récupérant verif si le :_id===req.params.id)
 exports.getProductUnity = (req, res, next) => {
   Product.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) =>
-      res.status(404).json({ message: "ligne 68 Objet non enregistré !" })
+      res.status(404).json({ message: "Objet non enregistré !" })
     );
 };
-
+/******************************************UPDATE***************************** */
 //modification product
 exports.modifProduct = (req, res, next) => {
   const productObjet = req.file
@@ -50,6 +61,7 @@ exports.modifProduct = (req, res, next) => {
         }`,
       }
     : { ...req.body };
+    //methode updateOne() 1er argument=objet a modifier/verifSiId=idOk
   Product.updateOne(
     { _id: req.params.id },
     { ...productObjet, _id: req.params.id }
@@ -57,11 +69,13 @@ exports.modifProduct = (req, res, next) => {
     .then(() => res.status(200).json({ message: "Sauce modifiée !" }))
     .catch((error) => res.status(400).json({ error }));
 };
+
+/********************************************************DELETE********************* */
 //delete product en verifiant que l'utilisateur a bien le bon identifiant
 exports.deleteProduct = (req, res, next) => {
   Product.findOne({ _id: req.params.id })
     .then((product) => {
-      const filename = product.imageUrl.split("/images/")[1];
+      const filename = product.imageUrl.split("/images/")[1];//extraire nom fichier a supprimer
       fs.unlink(`images/${filename}`, () => {
         Product.deleteOne({ _id: req.params.id })
           .then(() => res.status(200).json({ message: "Objet supprimé !" }))
@@ -72,16 +86,8 @@ exports.deleteProduct = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-//requêtes intercepte
-exports.getAllProduct = (req, res, next) => {
-  Product.find()
-    .then((sauces) => res.status(200).json(sauces))
-    .catch((error) =>
-      res.status(400).json({ message: " ligne 80 Objet non enregistré !" })
-    );
-};
-
-exports.likeSauces = (req, res) => {
+/**********************************************likedProduct and dislikedProduct***** */
+exports.likeProducts = (req, res) => {
   /* Si le client Like cette sauce */
   if (req.body.like === 1) {
     Product.findOneAndUpdate(

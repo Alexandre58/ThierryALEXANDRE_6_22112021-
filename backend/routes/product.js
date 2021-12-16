@@ -36,7 +36,7 @@ router.get("/", auth, productControllers.getAllProduct);
  *
  *
  */
-router.post("/:id/like", auth, productControllers.likeSauces);
+router.post("/:id/like", auth, productControllers.likeProducts);
 /***********************************FIN ROUTE************ */
 
 module.exports = router;

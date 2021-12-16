@@ -4,7 +4,7 @@ const jsonWebToken = require("jsonwebtoken");
 //npm install --save jsonwebtoken
 //installation bcrypt //npm install --save bcript
 
-//hashage du mot de passe
+/**********************************enregistrement d'utilisateur et hashage du mot de passe***********************/
 exports.signup = (req, res, next) => {
   bcrypt
     .hash(req.body.password, 10)
@@ -22,7 +22,7 @@ exports.signup = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
-/***********function login */
+/*******************************************************Connection des utilisateurs ********************************/
 exports.login = (req, res, next) => {
   //recup utilisateur
   //if user !user =>error
