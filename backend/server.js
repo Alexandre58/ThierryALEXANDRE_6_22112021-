@@ -12,7 +12,7 @@ const normalizePort = (val) => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || process.env.SERVER_CONNECT);
+const port = normalizePort(process.env.PORT || "3000" );
 app.set("port", port);
 //recherche erreur et gestion puis enregistre dans le serveur
 const errorHandler = (error) => {
@@ -47,5 +47,4 @@ server.on("listening", () => {
   const bind = typeof address === "string" ? "pipe " + address : "port " + port;
   console.log("Listening on " + bind);
 });
-
 server.listen(port);

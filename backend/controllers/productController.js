@@ -88,7 +88,7 @@ exports.deleteProduct = (req, res, next) => {
 
 /**********************************************likedProduct and dislikedProduct***** */
 exports.likeProducts = (req, res) => {
-  /* Si le client Like cette sauce */
+  /* Si le client Like cette sauce $inc=opérateur incrémente*/
   if (req.body.like === 1) {
     Product.findOneAndUpdate(
       { _id: req.params.id },
@@ -101,7 +101,7 @@ exports.likeProducts = (req, res) => {
     try {
     Product.findOneAndUpdate(
       { _id: req.params.id },
-      { $inc: { dislikes: 1 }, $push: { UsersDisliked: req.body.userId } }
+      { $inc: { dislikes: 1 }, $push: { usersDisliked: req.body.userId } }
     )
       .then(() => res.status(200).json({ message: "Dislike ajouté !" }))
       .catch((error) => res.status(400).json({ error }));
@@ -118,10 +118,10 @@ exports.likeProducts = (req, res) => {
         )
           .then(() => res.status(200).json({ message: "like retiré !" }))
           .catch((error) => res.status(400).json({ error }));
-      } else if (resultat.UsersDisliked.includes(req.body.userId)) {
+      } else if (resultat.usersDisliked.includes(req.body.userId)) {
         Product.findOneAndUpdate(
           { _id: req.params.id },
-          { $inc: { dislikes: -1 }, $pull: { UsersDisliked: req.body.userId } }
+          { $inc: { dislikes: -1 }, $pull: { usersDisliked: req.body.userId } }
         )
           .then(() => res.status(200).json({ message: "dislike retiré !" }))
           .catch((error) => res.status(400).json({ error }));
