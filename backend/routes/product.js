@@ -1,42 +1,39 @@
+"use strict";
 const express = require("express");
 const router = express.Router();
 const productControllers = require("../controllers/productController");
-//gestion identification
 const auth = require("../middleware/auth");
 const multer = require("../middleware/multer-config");
 
-/********************ROUTE***************************** */
 /**
- * intercepter les reqêtes POST / converti les données de l'objet en json
- * le dernier middleware renvoi la responce au client
- * renvoi un code http de 201 de création de donnée reussie
+ * creat
  */
 router.post("/", auth, multer, productControllers.createProduct);
 /**
- * modification d'un article product
+ * modify
  */
 router.put("/:id", auth, multer, productControllers.modifProduct);
 /**
  *
- * suppression d'un article product
+ * delete
  */
 router.delete("/:id", auth, productControllers.deleteProduct);
 /**
- * recup d'un seule article product
+ * recup of a single product item
  */
 router.get("/:id", auth, productControllers.getProductUnity);
 /**
  *
- * intercepter tout les products
+ * intercept all products
  * (/api/sauces) = http://3000/api/sauces
  */
 router.get("/", auth, productControllers.getAllProduct);
 
 /**
  *
- *
+ *like/disliked
  */
 router.post("/:id/like", auth, productControllers.likeProducts);
-/***********************************FIN ROUTE************ */
+
 
 module.exports = router;

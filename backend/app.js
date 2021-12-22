@@ -1,49 +1,50 @@
-require('dotenv').config();
+"use strict";
+/*****************import express**************** */
 const express = require("express");
-//const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
-//accés chemin images
+/*****************file.env********************* */
+require("dotenv").config();
+/***********connection database file db.js*******/
+const mongoose = require("./db/db.js");
+/*********** protection of HTTP headers.*********/
+const helmet = require("helmet");
+/*** Security for multi-origin requests**********/
+const cors = require("cors");
+/***********access path images*******************/
 const path = require("path");
-//import routes 
+/********import morgan (logger http)*************/
+const morgan = require("morgan");
+/***************import routes********************/
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
-/**************************************************Express **/
+/*****************Express********************* **/
 const app = express();
-/**************************gestion de la requête POST venant de l'application front-end, extraction du corps JSON************** */
+
+/************************helmet http en-têtes protection *******************************************/
+app.use(helmet());
+/*management of the POST request coming from the front-end application, extraction of the JSON body*/
 app.use(express.json());
-
-/**************************logique de connexion a mongodb atlas et sécurisation par une variable d'environnement*************** */
-mongoose
-  .connect(
-    process.env.APP_CONNECT_MONGOD,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
-  .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch(() => console.log("Connexion à MongoDB échouée !"));
-
-/***************************************************CORS *************************************************************/
-//code permettant de faire fonctionné deux adresses differentes backend et frontend dans ce cas,premier middleware d'accés 
-//permission a l'appication d'accéder a l'api avec les headers spécifiques
-//evite les erreurs liées quand le client ne partage pas les serveur de la même origine
-//configure des headers specifiques a l'objet responce
+/**************************log HTTP requests and errors terminal(dev)***************************** */
+app.use(morgan("dev"));
+/************************CORS cross-origin ressourse sharing ***************************************/
+//avoid related errors when the client does not share servers from the same origin
+//configure headers specific to the responce object
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");//origin = * => tout le monde peut accéder
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-  );//autorisation de certains hearders
+  );
   res.setHeader(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-  );//autorise ces methodes
+  );
   next();
 });
-/******************************************************************************************************************** */
-//path accés chemin fichier image
+/******************************access path image file***********************/
 app.use("/images", express.static(path.join(__dirname, "images")));
-//routes router product.js
+/**********************************router product.js**************************/
 app.use("/api/sauces", productRoutes);
-//routes router user.js liée a l authentification
+/**********************************authentication routes*************************/
 app.use("/api/auth", userRoutes);
 
 module.exports = app;

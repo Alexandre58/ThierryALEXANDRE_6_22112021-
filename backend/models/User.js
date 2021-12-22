@@ -1,8 +1,9 @@
+"use strict";
 const mongoose = require("mongoose");
 
 const uniqueValidator = require("mongoose-unique-validator");
 
-/****************création du schéma User =unique:true empeche des connections avec la meme adresse*******/
+/****************creation of the User = unique schema: true prevents connections with the same address*******/
 const userSchema = mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },

@@ -1,5 +1,6 @@
+"use strict";
 const mongoose = require("mongoose");
-//schema
+//schema db
 const productSchema = mongoose.Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },

@@ -1,7 +1,8 @@
+"use strict";
 const http = require("http");
 const app = require("./app");
 
-//renvoi d'un port valide fourni soous forme d'un numero ou d'une chaine
+/****************return of a valid port provided in the form of a number or a string**************/
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
   if (isNaN(port)) {
@@ -12,9 +13,9 @@ const normalizePort = (val) => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || "3000" );
+const port = normalizePort(process.env.PORT || process.env.SERVER_CONNECT);
 app.set("port", port);
-//recherche erreur et gestion puis enregistre dans le serveur
+/*************************error search and management then save in the server**********************/
 const errorHandler = (error) => {
   if (error.syscall !== "listen") {
     throw error;
@@ -36,11 +37,10 @@ const errorHandler = (error) => {
   }
 };
 /**
- * createServer() reagi au requêtes entrantes et reçoi comme
- * arguments : l'objet requête/responce/next
+ * createServer() react to incoming requests and receive as arguments: the object requête/responce/next
  */
 const server = http.createServer(app);
-//ecouteur d'evenement enregistré consignant le port ou le canal sur lequel le serveur s'execute
+//registered event listener logging the port or channel the server is running on
 server.on("error", errorHandler);
 server.on("listening", () => {
   const address = server.address();

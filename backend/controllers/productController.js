@@ -1,57 +1,49 @@
+"use strict";
 const Product = require("../models/Product");
-//"file system accés au opération lié au differents fichiers
+//"file system access to the operation linked to the different files
 const fs = require("fs");
-/***************************************OPERATION CRUD*************** ******************************************/
-/**
- *
- * intercepter les reqêtes / converti les données de l'objet en json
- * le dernier middleware renvoi la responce au client
- * renvoi un code http de création de donnée reussie
- */
-/***************************************************CREAT************ */
+
+/***************************************************CRUD*********************************** */
 exports.createProduct = (req, res, next) => {
-  //extraire l'objet json de product
   const productObject = JSON.parse(req.body.sauce);
-  
-  delete productObject._id;//retirer le champ _id car elle sera automatiquement crée par mongodb
-  //création d'une nouvelle instance de l'objet product
+  delete productObject._id;//remove the _id field, it will be automatically created by mongodb
+  //creation of a new instance of the product object
   const product = new Product({
-    //...copie du corps de la requête
+    //...copy of the body of the request
     ...productObject,
-    //genérer l'url de l'image
+    //generate image url
     imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
     }`,
   });
-  //sauvegarde dans la base de donnée/envoi status de la requête
+  //save in database / send request status
   product
     .save()
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
+    .then(() => res.status(201).json({ message: "Registered object !" }))
     .catch((error) =>
-      res.status(400).json({ message: " ligne 44 Objet non enregistré !" })
+      res.status(400).json({ message: "Unregistered object !" })
     );
 };
-/***********************************************READ************************* */
-/**
- * find()renvoie tout les products
- */
+
+
+ /***********************find () returns all products****************************/
  exports.getAllProduct = (req, res, next) => {
   Product.find()
     .then((sauces) => res.status(200).json(sauces))
     .catch((error) =>
-      res.status(400).json({ message: "Objet non enregistré !" })
+      res.status(400).json({ message: "Unregistered object!" })
     );
 };
-//renvoi d'un seul product (en récupérant verif si le :_id===req.params.id)
+/*return of a single product (by retrieving verif if the: _id === req.params.id)*/
 exports.getProductUnity = (req, res, next) => {
   Product.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) =>
-      res.status(404).json({ message: "Objet non enregistré !" })
+      res.status(404).json({ message: "Unregistered object !" })
     );
 };
-/******************************************UPDATE***************************** */
-//modification product
+
+/****************************product modification********************************/
 exports.modifProduct = (req, res, next) => {
   const productObjet = req.file
     ? {
@@ -61,24 +53,24 @@ exports.modifProduct = (req, res, next) => {
         }`,
       }
     : { ...req.body };
-    //methode updateOne() 1er argument=objet a modifier/verifSiId=idOk
+    //method updateOne() 1er argument = object  modify/verifSiId=idOk
   Product.updateOne(
     { _id: req.params.id },
     { ...productObjet, _id: req.params.id }
   )
-    .then(() => res.status(200).json({ message: "Sauce modifiée !" }))
+    .then(() => res.status(200).json({ message: "Modified sauce !" }))
     .catch((error) => res.status(400).json({ error }));
 };
 
-/********************************************************DELETE********************* */
-//delete product en verifiant que l'utilisateur a bien le bon identifiant
+
+/***********delete product by verifying that the user has the correct username******/
 exports.deleteProduct = (req, res, next) => {
   Product.findOne({ _id: req.params.id })
     .then((product) => {
-      const filename = product.imageUrl.split("/images/")[1];//extraire nom fichier a supprimer
+      const filename = product.imageUrl.split("/images/")[1];//extract name of file to delete
       fs.unlink(`images/${filename}`, () => {
         Product.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: "Objet supprimé !" }))
+          .then(() => res.status(200).json({ message: "Deleted object !" }))
           .catch((error) => res.status(400).json({ error }));
       });
     })
@@ -88,27 +80,27 @@ exports.deleteProduct = (req, res, next) => {
 
 /**********************************************likedProduct and dislikedProduct***** */
 exports.likeProducts = (req, res) => {
-  /* Si le client Like cette sauce $inc=opérateur incrémente*/
+  //If the customer likes this sauce $inc=opérateur incrémente
   if (req.body.like === 1) {
     Product.findOneAndUpdate(
       { _id: req.params.id },
       { $inc: { likes: 1 }, $push: { usersLiked: req.body.userId } }
     )
-      .then(() => res.status(200).json({ message: "Like ajouté !" }))
+      .then(() => res.status(200).json({ message: "Like added !" }))
       .catch((error) => res.status(400).json({ error }));
-    /* Si le client dislike cette sauce */
+    /* If the customer dislike this sauce */
   } else if (req.body.like === -1) {
     try {
     Product.findOneAndUpdate(
       { _id: req.params.id },
       { $inc: { dislikes: 1 }, $push: { usersDisliked: req.body.userId } }
     )
-      .then(() => res.status(200).json({ message: "Dislike ajouté !" }))
+      .then(() => res.status(200).json({ message: "Dislike added!" }))
       .catch((error) => res.status(400).json({ error }));
     } catch (e) {
       console.log(e);
     }
-    /* Si le client annule son choix */
+    /* If the customer cancels their choice */
   } else {
     Product.findOne({ _id: req.params.id }).then((resultat) => {
       if (resultat.usersLiked.includes(req.body.userId)) {
@@ -116,14 +108,14 @@ exports.likeProducts = (req, res) => {
           { _id: req.params.id },
           { $inc: { likes: -1 }, $pull: { usersLiked: req.body.userId } }
         )
-          .then(() => res.status(200).json({ message: "like retiré !" }))
+          .then(() => res.status(200).json({ message: "like removed !" }))
           .catch((error) => res.status(400).json({ error }));
       } else if (resultat.usersDisliked.includes(req.body.userId)) {
         Product.findOneAndUpdate(
           { _id: req.params.id },
           { $inc: { dislikes: -1 }, $pull: { usersDisliked: req.body.userId } }
         )
-          .then(() => res.status(200).json({ message: "dislike retiré !" }))
+          .then(() => res.status(200).json({ message: "dislike removed !" }))
           .catch((error) => res.status(400).json({ error }));
       }
     });
