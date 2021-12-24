@@ -1,5 +1,5 @@
 # HOT TAKES 
-[![logo](./frontend/assets/images/flame.png)](#)
+[![logo](https://user.oc-static.com/upload/2021/07/29/16275605596354_PiiquanteLogo.png)](#)
 ## Projet P6
 
 ----------------------
