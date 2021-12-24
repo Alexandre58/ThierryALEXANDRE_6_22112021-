@@ -1,5 +1,5 @@
 # HOT TAKES 
-[![logo Thierry](frontend\assets\images\flame.png)](#)
+[![logo](./frontend/assets/images/flame.png)](#)
 ## Projet P6
 
 ----------------------
