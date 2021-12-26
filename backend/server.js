@@ -1,4 +1,12 @@
 "use strict";
+/**
+ * 
+ * pour le site en production utiliser :
+ * const https = require("https"); 
+ * ce réferer à OpenSSL pour optenir un certificat SSL
+ * 
+ */
+     
 const http = require("http");
 const app = require("./app");
 
@@ -38,6 +46,7 @@ const errorHandler = (error) => {
 };
 /**
  * createServer() react to incoming requests and receive as arguments: the object requête/responce/next
+ * production = const server = https.createServer(app);
  */
 const server = http.createServer(app);
 //registered event listener logging the port or channel the server is running on

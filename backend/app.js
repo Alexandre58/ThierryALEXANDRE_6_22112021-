@@ -5,8 +5,9 @@ const express = require("express");
 require("dotenv").config();
 /***********connection database file db.js*******/
 const mongoose = require("mongoose");
-/*********** protection of HTTP headers.cache X-powerded-bytête here*********/
+/*********** protection of HTTP headers.cache X-powerded-bytête here (XSS)*********/
 const helmet = require("helmet");
+const cors = require('cors');
 /***********access path images*******************/
 const path = require("path");
 /********import morgan (logger http)*************/
@@ -18,7 +19,7 @@ const userRoutes = require("./routes/user");
 const app = express();
 /**************************log HTTP requests and errors terminal(dev)***************************** */
 app.use(morgan("dev"));
-
+app.use(cors())
 /*management of the POST request coming from the front-end application, extraction of the JSON body*/
 app.use(express.json());
 /**************************connection logic to mongodb atlas and securing by an environment variable*************** */
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
   );
   next();
 });
-/************************helmet http en-têtes protection *******************************************/
+/************************helmet http en-têtes protection*******************************************/
 app.use(helmet());
 /******************************access path image file***********************/
 app.use("/images", express.static(path.join(__dirname, "images")));
