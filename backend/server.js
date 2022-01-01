@@ -5,11 +5,9 @@
  * const https = require("https"); 
  * ce réferer à OpenSSL pour optenir un certificat SSL
  * 
- */
-     
+ */ 
 const http = require("http");
 const app = require("./app");
-
 /****************return of a valid port provided in the form of a number or a string**************/
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
@@ -21,7 +19,7 @@ const normalizePort = (val) => {
   }
   return false;
 };
-const port = normalizePort(process.env.PORT || process.env.SERVER_CONNECT);
+const port = normalizePort(process.env.PORT || process.env.SERVER_CONNECT);//return port valid//errorHandler:look error
 app.set("port", port);
 /*************************error search and management then save in the server**********************/
 const errorHandler = (error) => {

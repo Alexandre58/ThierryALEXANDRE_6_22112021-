@@ -10,4 +10,6 @@ const userSchema = mongoose.Schema({
 });
 /***************methode plugin validation sécurité*******************************************************/
 userSchema.plugin(uniqueValidator);
+
+
 module.exports = mongoose.model("User", userSchema);

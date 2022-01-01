@@ -1,11 +1,11 @@
 "use strict";
 const express = require('express');
 const router = express.Router();
-const userControle = require('../controllers/user');
+const userControler = require('../controllers/user');
 const password = require('../middleware/password');
 
-router.post('/signup',password, userControle.signup);
-router.post('/login', userControle.login);
+router.post('/signup',password, userControler.signup);
+router.post('/login', userControler.login);
 
 
 
