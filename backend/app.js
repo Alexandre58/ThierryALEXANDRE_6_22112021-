@@ -12,10 +12,14 @@ const cors = require('cors');
 const path = require("path");
 /********import morgan (logger http)*************/
 const morgan = require("morgan");
+
+
 /***************import routes********************/
 const productRoutes = require("./routes/product");
 const userRoutes = require("./routes/user");
 /*****************Express********************* **/
+
+
 const app = express();
 /**************************log HTTP requests and errors terminal(dev)***************************** */
 app.use(morgan("dev"));

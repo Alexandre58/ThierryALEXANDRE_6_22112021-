@@ -1,5 +1,6 @@
 "use strict";
 const multer = require("multer");
+//backup img
 /******************** management of files entering HTTP requests******************/
 const MIME_TYPES = {
   "image/jpg": "jpg",
